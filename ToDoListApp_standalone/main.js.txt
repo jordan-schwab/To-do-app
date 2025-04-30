@@ -1,0 +1,89 @@
+const { app, BrowserWindow, Menu } = require('electron');
+const path = require('path');
+const url = require('url');
+
+// Keep a global reference of the window object
+let mainWindow;
+
+function createWindow() {
+  // Create the browser window
+  mainWindow = new BrowserWindow({
+    width: 900,
+    height: 700,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    },
+    title: 'To-Do List App'
+  });
+
+  // Load the index.html file
+  mainWindow.loadFile('index.html');
+
+  // Create the application menu
+  const template = [
+    {
+      label: 'File',
+      submenu: [
+        { role: 'quit' }
+      ]
+    },
+    {
+      label: 'Edit',
+      submenu: [
+        { role: 'undo' },
+        { role: 'redo' },
+        { type: 'separator' },
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
+        { role: 'delete' },
+        { type: 'separator' },
+        { role: 'selectAll' }
+      ]
+    },
+    {
+      label: 'View',
+      submenu: [
+        { role: 'reload' },
+        { role: 'toggleDevTools' },
+        { type: 'separator' },
+        { role: 'resetZoom' },
+        { role: 'zoomIn' },
+        { role: 'zoomOut' },
+        { type: 'separator' },
+        { role: 'togglefullscreen' }
+      ]
+    },
+    {
+      label: 'Window',
+      submenu: [
+        { role: 'minimize' },
+        { role: 'zoom' },
+        { role: 'close' }
+      ]
+    }
+  ];
+
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+
+  // Emitted when the window is closed
+  mainWindow.on('closed', function() {
+    mainWindow = null;
+  });
+}
+
+// This method will be called when Electron has finished initialization
+app.whenReady().then(createWindow);
+
+// Quit when all windows are closed
+app.on('window-all-closed', function() {
+  // On macOS it is common for applications to stay active until the user quits explicitly
+  if (process.platform !== 'darwin') app.quit();
+});
+
+app.on('activate', function() {
+  // On macOS it's common to re-create a window when the dock icon is clicked
+  if (mainWindow === null) createWindow();
+});
